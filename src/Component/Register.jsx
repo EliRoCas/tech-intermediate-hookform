@@ -1,24 +1,32 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 function Register() {
     const { register, handleSubmit, formState: { errors }, } = useForm();
 
-    const valSubmit = (data) => console.log(data)
-
+    const valSubmit = (data) => console.log(data);
 
 
     return (
         <>
-            <form onSubmit={handleSubmit(valSubmit)}>
+            <form onSubmit={handleSubmit((valSubmit))}>
                 <label htmlFor="name">Nombre</label>
-                <input {...register('name', {
+                <input type="text" {...register('name', {
                     required: {
                         value: true,
                         message: "El nombre es requerido"
                     },
+                    minLength: {
+                        value: 6,
+                        message: "El nombre debe tener mínimo 6 caracteres"
+                    },
+                    maxLength: {
+                        value: 30,
+                        message: "El nombre debe tener máximo 30 caracteres"
+                    }
                 })}
                 />
                 {errors.name && <p className="text-danger">{errors.name.message}</p>}
+
 
                 <label htmlFor="email">Correo</label>
                 <input type="email" {...register('email', {
@@ -50,19 +58,19 @@ function Register() {
 
                 <label htmlFor="confirmPassword"> Confirmar Contraseña</label>
                 <input type="password"{...register('confirmPassword', {
-                    required:{
+                    required: {
                         value: true,
                         message: "La confirmación de contraseña es requerida"
-                    }, 
+                    },
                     pattern: {
-                        value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[a-zA-Z]).{8,}$/,
+                        value: /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+|~=`{}\[\]:";'<>?,.\/])(?=.*[a-z]).{8,}$/,
                         message: "Las contraseñas no coinciden"
                     }
                 })} />
 
                 <label htmlFor="birthday"> Fecha de Nacimiento</label>
-                <input type="date"{...register('date', {
-                    required:{
+                <input type="date"{...register('birthday', {
+                    required: {
                         value: true,
                         message: "La fecha de nacimiento es requerida"
                     }
@@ -77,4 +85,35 @@ function Register() {
     )
 }
 
-export default Register; 
+export default Register;
+
+
+// Otra forma de manejar el nombre y los errores 
+{/* <label htmlFor="name">Nombre</label>
+<input type="text"{...register('name', {
+    required: true,
+    minLength: 6,
+    maxLength: 20,
+
+})}
+/>
+{errors.name?.type == "required" && <p className="text-danger">El nombre es requerido</p>}
+{errors.name?.type == "minLength" && <p className="text-danger">El nombre debe tener mínimo 6 caracteres</p>}
+ */}
+
+
+//  Otra forma de validar que las contraseñas coincidan
+// const { register, handleSubmit, formState: { errors }, } = useForm();
+// ...
+//  const password = watch("password","");
+//...
+// <label htmlFor="confirmPassword"> Confirmar Contraseña</label>
+// <input type="password"{...register('confirmPassword', {
+//     required: true,
+//         message: "La confirmación de contraseña es requerida"
+//     pattern: /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+|~=`{}\[\]:";'<>?,.\/])(?=.*[a-z]).{8,}$/,
+//          validate: (value) => value === password,
+//     }
+// })} />
+//
+//   {errors.comfirmPassword?.type=="validate" && <p className="text-danger"> Las contraseñas no coinciden}</p>
